@@ -78,5 +78,9 @@ friends: [
     {
         title: "Hux Blog",
         href: "http://huangxuan.me"
+    },
+    {
+        title: "cenalulu",
+        href: "http://cenalulu.github.io/"
     }
 ]
