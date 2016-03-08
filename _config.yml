@@ -76,6 +76,10 @@ gems: ["jekyll-paginate"]
 # Friends
 friends: [
     {
+        title: "Bohr Blog",
+        href: "http://bohr.me"
+    },
+    {
         title: "Hux Blog",
         href: "http://huangxuan.me"
     },
