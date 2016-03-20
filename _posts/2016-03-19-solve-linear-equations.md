@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "用高斯消元法求解线性方程组"
-date:       2016-03-20 12:00:00
+date:       2016-03-19 22:00:00
 author:     "Thh"
 tags:
     - 算法
@@ -13,21 +13,20 @@ tags:
 
 	public class FunctionResolver {
 
-    	public static class LinearEquationGroup {
-    		/*
-    		  代表线性方程组的矩阵。方程组已经经过归一化处理，带未知变量的部分全部位于“=”左边，常数合并后位于“=”右边。
-    		  比如： 
-    		  	2a + b - c = 8
-            	-3a - b + 2c = -11
-            	-2a + b + 2c = -3
-            	
-              对应的矩阵为：
-               2   1  -1    8
-              -3  -1   2  -11
-              -2   1   2   -3
-    		*/
+	    public static class LinearEquationGroup {
+	        /**
+	    	代表线性方程组的矩阵。方程组已经经过归一化处理，带未知变量的部分全部位于“=”左边，常数合并后位于“=”右边。
+	    	比如： 
+	    		 2a + b - c = 8
+	            	-3a - b + 2c = -11
+	            	-2a + b + 2c = -3
+
+	              对应的矩阵为：
+	               2   1  -1    8
+	              -3  -1   2  -11
+	              -2   1   2   -3
+	         */
 	        private BigDecimal[][] matrix;
-	        
 	        //未知变量的名称，排列顺序和矩阵一致，比如上面的例子中，对应的变量名列表就是a, b, c
 	        private List<String> variantes;
 
@@ -39,16 +38,16 @@ tags:
 	            check();
 	        }
 
-			private void check() {
-            	for (int i = 0; i < matrix.length; i++) {
-                if (matrix.length != (matrix[i].length - 1)) {
-                    throw new IllegalArgumentException("输入矩阵有误! 必须为n*(n+1)矩阵");
-                	}
-            	}
-        	}
-        	
+	        private void check() {
+	            for (int i = 0; i < matrix.length; i++) {
+	                if (matrix.length != (matrix[i].length - 1)) {
+	                    throw new IllegalArgumentException("输入矩阵有误! 必须为n*(n+1)矩阵");
+	                }
+	            }
+	        }
+
 	        public Map<String, BigDecimal> solve() {
-	        	check();
+	            check();
 	            sortRows();
 	            eliminateVarianteDownwards();
 	            normalize();
@@ -62,7 +61,9 @@ tags:
 	            return ret;
 	        }
 
-	        // 重排序行, 以便做高斯消元. 保证第i行的第i列元素不为0
+	        /**
+	         * 重排序行, 以便做高斯消元. 保证第i行的第i列元素不为0
+	         */
 	        void sortRows() {
 	            int row = 0;
 	            int below = 0;
@@ -70,7 +71,7 @@ tags:
 	            for (; row < matrix.length - 1; ++row) {
 	                col = row;
 	                if (matrix[row][col].compareTo(BigDecimal.ZERO) == 0) {
-	                    for (below = row + 1; below < matrix.length - 1; below++) {
+	                    for (below = row + 1; below < matrix.length; below++) {
 	                        if (matrix[below][col].compareTo(BigDecimal.ZERO) != 0) {
 	                            BigDecimal[] temp = matrix[row];
 	                            matrix[row] = matrix[below];
@@ -79,13 +80,15 @@ tags:
 	                        }
 	                    }
 	                    if (below >= matrix.length) {
-                        	throw new IllegalArgumentException("方程组无解或者无唯一解!");
-                    	}
+	                        throw new IllegalArgumentException("方程组无解或者无唯一解!");
+	                    }
 	                }
 	            }
 	        }
 
-			//从上往下消元。消元结果使得第i行以下的第i列都为0
+	        /**
+	         * 从上往下消元。消元结果使得第i行以下的第i列都为0
+	         */
 	        void eliminateVarianteDownwards() {
 	            int baseRow = 0;
 	            int targetRow;
@@ -105,11 +108,11 @@ tags:
 	            }
 	        }
 
-			//归一化。使得第i行第i列的元素都为1，这样最后得到的简化行阶梯矩阵的最后一列即为解
+	        //归一化。使得第i行第i列的元素都为1，这样最后得到的简化行阶梯矩阵的最后一列即为解
 	        void normalize() {
 	            for (int i = 0; i < matrix.length; i++) {
 	                if (matrix[i][i].compareTo(BigDecimal.ZERO) == 0) {
-	                    throw new IllegalArgumentException("矩阵对角线的元素不应该为0, 输入有误或者程序有bug!");
+	                    throw new IllegalArgumentException("方程组无解或者无唯一解!");
 	                }
 	                if (matrix[i][i].compareTo(BigDecimal.ONE) == 0)
 	                    continue;
@@ -119,7 +122,7 @@ tags:
 	            }
 	        }
 
-			//从下往上消元。使得第i行以上第i列的元素都为0
+	        //从下往上消元。使得第i行以上第i列的元素都为0
 	        void eliminateVarianteUpwards() {
 	            int baseRow = matrix.length - 1;
 	            int colCnt = matrix[0].length;
@@ -166,7 +169,7 @@ tags:
 	        }
 	    }
 
-		//解析Map形式输入的方程组。输入类型Map<String, String>，每个entry代表一个方程，entry的key是方程“=”左边部分，entry的value是“=”右边部分。未知变量用字母串表示。 
+	    //解析Map形式输入的方程组。输入类型Map<String, String>，每个entry代表一个方程，entry的key是方程“=”左边部分，entry的value是“=”右边部分。未知变量用字母串表示。
 	    public static class LinearEquationGroupBuilder {
 	        private Map<String, List<String>> keyTokens = new HashMap<>();
 	        private Map<String, List<String>> valueTokens = new HashMap<>();
